@@ -6,15 +6,14 @@ We train, validate and test a position-specific weight matrix (PSWM) across five
 The dataset is divided into five subsets (1–5), which are rotated cyclically to create different combinations of training, validation, and test sets.
 Each iteration follows this pattern:
 
-```
-Iteration | Train      | Validation | Test
-------------------------------------------
-1         | 1, 2, 3    | 4          | 5
-2         | 2, 3, 4    | 5          | 1
-3         | 3, 4, 5    | 1          | 2
-4         | 4, 5, 1    | 2          | 3
-5         | 5, 1, 2    | 3          | 4
-```
+| Iteration | Train   | Validation | Test |  
+|------------|----------|-------------|------|  
+| 1 | 1, 2, 3 | 4 | 5 |  
+| 2 | 2, 3, 4 | 5 | 1 |  
+| 3 | 3, 4, 5 | 1 | 2 |  
+| 4 | 4, 5, 1 | 2 | 3 |  
+| 5 | 5, 1, 2 | 3 | 4 |  
+
 
 The PSWM is trained on positive signal peptide sequences:
 
