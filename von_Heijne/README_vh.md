@@ -36,3 +36,9 @@ Each fold produces plots for:
 - Confusion Matrix
 
 Finally, the average of all five thresholds is computed to obtain the mean threshold to be used for the independent test set. 
+
+| MCC      | ACC      | PPV      | SEN      | Threshold |
+|-----------|-----------|----------|----------|------------|
+| 0.658971  | 0.930186  | 0.676772 | 0.723061 | 6.1        |
+
+
