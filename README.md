@@ -29,7 +29,7 @@ The corresponding queries are available in [`query_pos.txt`](query_pos.txt) and 
 ## Support Vector Machine Model
 - **Feature extraction**: identify the features that can possibly be informative for the identification of the presence of the signal peptide. (extracted features: Hydrophobicity, Amino Acid Composition, Net Charge, Hydrophilicity, Helix Propensity, Flexibility, Isoelectric Point (pI), Bulkiness).
 - An **SVM model** is trained, and feature selection using **RFE (Recursive Feature Elimination)** is applied for each of the five validation folds (3 training sets, 1 validation set, and 1 test set).
-More details in 
+More details in [`README_FS.md`](https://github.com/Amedeoxa/LAB2_project_group_N11/blob/main/feature_selection/README_FS.md).
 
 ---
 ## Requirements 
