@@ -1,24 +1,32 @@
 # LAB2_project_group_N11
-This project is a fundamental part of the Lab2 exam.
+
+Machine Learning project aimed at predicting **signal peptides** (SPs) in protein sequences using two complementary approaches: **Von Heijne’s statistical model** and **Support Vector Machine (SVM)**. 
 
 ## Data Collection
-- We first carried out some preliminary research to select positive and negative data according to specific criteria.  
-  The queries used for these searches are stored in the files [`query_neg.txt`](query_neg.txt) and [`query_pos.txt`](query_pos.txt).
-- The results were then downloaded in **JSON (uncompressed)** format
-- For the positive results, we filtered out entries with a signal peptide (SP) value `< 14` or a cleavage site that was not null.  
-- The negative set remained unchanged in number. However, we labeled each entry as **"True"** or **"False"** depending on the presence or absence of a transmembrane helix in the first 90 residues. 
-- The final results were converted into two output files:  
-  - **TSV** – containing relevant information about each entry.  
-  - **FASTA** – containing the sequences of the entries.
-- For the TSV files, we extracted only **five specific features** for each entry.
+-  Download positive (with SP) and negative (without SP) protein sets from UniProt in JSON format using specific selection criteria.
+The corresponding queries are available in [`query_pos.txt`](query_pos.txt) and [`query_neg.txt`](query_neg.txt).
+- After applying additional filtering steps, results are converted into TSV and FASTA files. 
 ---
 ## Data Preparation 
-- We utilized [`positive.tsv`](positive.tsv) and [`negative.tsv`](negative.tsv) 
-- Sequences were clustered separately with MMseqs, applying a 30% sequence identity threshold and 40% coverage.
-- The number of unique IDs after clustering was **1193** for the positive set and **8934** for the negative set.
-- From these clusters, we generated two new TSV files containing only the representative IDs and their associated features in [`non_redundant_pos.tsv`](non_redundant_pos.tsv) and [`non_redundant_neg.tsv`](non_redundant_neg.tsv)
-- We divided the datasets in training (80% positives + 80% negatives) and test (20% positives + 20% negatives) sets and splitted the training set in 5 subsets.
+- Remove redundancy: Positive and negative sequences are clustered separately using MMseqs, producing:
+[`non_redundant_pos.tsv`](non_redundant_pos.tsv)
+[`non_redundant_neg.tsv`](non_redundant_neg.tsv)
+- Dataset split: 80% of each class is used for training and 20% for testing.
+- Cross-validation: The training set is further divided into 5 folds for model evaluation.
 ---
 ## Data Analysis
-- We compared the distributions of protein lengths between positive and negative sequences by plotting them with histograms and boxplots.  
-- Then, we plotted the distribution of SP lengths using a histogram.
+- **Sequence length distribution**: comparison of positive and negative sequences in the training and test sets, visualized with histograms.  
+- **Signal peptide length distribution**: analysis of SP length in positive sequences from training and test sets, visualized with density plots.  
+- **Amino acid composition**: comparison of SP amino acid frequencies between our dataset (training/test) and SwissProt reference data using barplots.  
+- **Taxonomic classification**: comparison of the taxonomic composition (kingdom and species levels) between training and test sets using pie charts.
+---
+## Von Heijne 
+- Implementation of a **cross-validation pipeline** based on the von Heijne algorithm for SP identification.
+- Construction of a Position-Specific Weight Matrix (PSWM) from positive SP sequences. 
+- Application of the model to the **training set** to detect SPs and compute relevant performance metrics.
+
+---
+## Support Vector Machine
+
+---
+## Requirements 
