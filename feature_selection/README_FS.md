@@ -1,28 +1,54 @@
-# Features extraction and selection
+# Feature Extraction and Selection
 
-## Extraction 
-This step involves finding features that can better help the model to distinguish protein sequences on the base of presence or not of the signal peptide. 
-In particular the festures chosen are calculated on the first part of the sequence since we know from previous explorative analysis that the signal peptide is in the first positions of the sequence:  
-*  **Hydrophobicity:** calculated through an hydrophobicity profile of each sequence applying the Kyte–Doolittle scale over a sliding window (5 residues) in the first 40 aa, and recording the average hydrophobicity value at each residue position.
-*  **Aminoacid Composition:** vector of 20 position indicating the frequences of the first 22 aa of each sequence.
-*  **Net Charge:** Measures the overall electrical charge of amino acids, indicating regions that are positively or negatively charged. For each sequence is indicated the mean, standard deviation and maximum value for each sequence.
-*  **hydrophilicity:** Mean, variation, and peak hydrophilicity of the sequences calculated in a sliding window of 5 residues — indicating how exposed different regions are to water.
-*  **Helix Propensity:** Statistical tendency (mean, std, and maximum) of residues to form alpha-helices calculated on a sliding window of 7 residues, reflecting local structural preferences.
-*  **Flexibility:** Average, variation, and maximum flexibility scores, describing how flexible or rigid different parts of the protein are. Calculated on sliding window of 7 residues.
-*  **Isoelectric Point:** Captures the average, variation, and peak local isoelectric point (pI) values along the sequence, reflecting how the balance between positive and negative charges changes across different regions of the protein.
-*  **Bulkiness:** average, variation, and maximum local side-chain volume along the sequence. It describes how large or crowded the amino acid residues are in a region, how tightly it packs, and how accessible certain regions are to solvent or other molecules. Calculated on sliding window of 7 residues.
+## 1. Feature Extraction
+
+This step identifies informative features to distinguish protein sequences with or without a signal peptide.  
+All features are computed on the **N-terminal region** (first part of the sequence), as previous descriptive analysis shown that signal peptides are typically located there.
+
+### Extracted Features
+
+| Feature | Description | Computation Details |
+|---------|-------------|-------------------|
+| **Hydrophobicity** | Measures hydrophobic character along the sequence. | Kyte–Doolittle scale, sliding window of 5 residues over the first 40 amino acids; average value per residue. 40-dimensional numpy array|
+| **Amino Acid Composition** | Frequency of each amino acid in the sequence segment. | 20-dimensional vector (numpy array) encoding the frequency of the first 22 amino acids. |
+| **Net Charge** | Overall electrostatic charge; highlights positive/negative regions. | Mean, standard deviation, and maximum values per sequence; KLEP840101 scale, window 2. Tridimensional numpy array |
+| **Hydrophilicity** | Indicates how exposed sequence regions are to water. | Mean, variation, and maximum values; HOPT810101 scale, sliding window 5. Tridimensional numpy array |
+| **Helix Propensity** | Tendency to form α-helices; reflects secondary structure preference. | Mean, standard deviation, and maximum; CHAM830101 scale, window 7. Tridimensional numpy array|
+| **Flexibility** | Local backbone flexibility; distinguishes rigid vs flexible regions. | Mean, variation, and maximum; BHAR880101 scale, window 7. Tridimensional numpy array |
+| **Isoelectric Point (pI)** | Local charge balance along the sequence. | Mean, variation, and maximum; ZIMJ680104 scale, window 2. Tridimensional numpy array|
+| **Bulkiness** | Steric volume of side chains; indicates packing and solvent accessibility. | Mean, variation, and maximum; ZIMJ680102 scale, window 7. Tridimensional numpy array|
+
+## 2. Feature Selection Procedure
+
+This part of the analysis combines **SVM classifiers** and **Random Forests** to select the most discriminative features.
+
+### Workflow
+
+| Step | Description |
+|------|-------------|
+| 1. Pipeline Definition | Create a pipeline with `StandardScaler()` for preprocessing and `SVC(kernel="rbf", C=C, gamma=gamma)` as the classifier. Ensures proper feature scaling. |
+| 2. Hyperparameter Search | Perform manual grid search over `C ∈ {0.1, 1.0, 10.0, 100.0}` and `gamma ∈ {"scale", 0.01, 0.1, 1.0}`. Select the best combination based on validation accuracy. |
+| 3. Cross-Validation | Divide data into 5 folds: 3 for training, 1 for validation, 1 for testing. Save each fold in `.npz` format. |
+| 4. Baseline Model Evaluation | Train an SVM on all features per fold; select best hyperparameters using validation accuracy. |
+| 5. Feature Importance Ranking | Train Random Forest on training data; rank features by Gini importance; select top 20 features. |
+| 6. Subset Optimization | Evaluate different top-k subsets of features with the SVM to find the optimal number of features; select best hyperparameters for the chosen subset. |
+| 7. Final Model Training | Train SVM with selected features and optimized parameters; evaluate on the test set. |
+| 8. Performance Evaluation | Compute metrics for both selected-feature model and baseline: MCC, Accuracy, Precision (PPV), Recall (Sensitivity), and Confusion Matrix. |
+
+### Results summary for each validation fold 
+
+| Fold | Model | MCC   | ACC   | PPV   | SEN   |
+|------|-------|-------|-------|-------|-------|
+| 1    | Selected features | 0.849 | 0.970 | 0.847 | 0.886 |
+|      | All features      | 0.881 | 0.976 | 0.854 | 0.937 |
+| 2    | Selected features | 0.789 | 0.959 | 0.808 | 0.817 |
+|      | All features      | 0.852 | 0.971 | 0.873 | 0.863 |
+| 3    | Selected features | 0.829 | 0.968 | 0.903 | 0.794 |
+|      | All features      | 0.825 | 0.968 | 0.913 | 0.777 |
+| 4    | Selected features | 0.860 | 0.973 | 0.888 | 0.862 |
+|      | All features      | 0.858 | 0.973 | 0.902 | 0.845 |
+| 5    | Selected features | 0.869 | 0.974 | 0.881 | 0.886 |
+|      | All features      | 0.886 | 0.978 | 0.912 | 0.886 |
 
 
-## Selection procedure
 
-1. Create a **pipeline** with `StandardScaler()` for preprocessing and `SVC(kernel="rbf", C=C, gamma=gamma, random_state=42)` as model.
-2. Define search grids for SVM hyperparameters C and gamma.
-3. Perform a cross-validation fold for each combination of the 5 validation sets (at each fold of validation 3 sets are train, 1 validation and 1 test set).
-4. Each cross-validation fold involves:
-   * store the sets of each fold in a `.npz` format file.
-   * perform a manual grid search over C and gamma values.
-   * train a Random Forest classifier on the training data using the Gini importance to rank features by their predictive power and select the 20 most important features.
-   * try different combinations of the selected features to choose the better one and the optimal number of features for the SVM model.
-   * select the best parameters for these features
-   * train a final SVM on the selected features using the best parameters.
-   * evaluate the performances on the test set comparing it with the baseline model (implemented inside the pipeline) through the metrics `MCC (Matthews Correlation Coefficient), Accuracy, Precision, Recall, Confusion Matrix`. 
