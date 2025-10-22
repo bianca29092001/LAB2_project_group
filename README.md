@@ -20,13 +20,16 @@ The corresponding queries are available in [`query_pos.txt`](query_pos.txt) and 
 - **Amino acid composition**: comparison of SP amino acid frequencies between our dataset (training/test) and SwissProt reference data using barplots.  
 - **Taxonomic classification**: comparison of the taxonomic composition (kingdom and species levels) between training and test sets using pie charts.
 ---
-## Von Heijne 
+## Von Heijne Model
 - Implementation of a **cross-validation pipeline** based on the von Heijne algorithm for SP identification.
 - Construction of a Position-Specific Weight Matrix (PSWM) from positive SP sequences. 
 - Application of the model to the **training set** to detect SPs and compute relevant performance metrics.
 
 ---
-## Support Vector Machine
+## Support Vector Machine Model
+- **Feature extraction**: identify the features that can possibly be informative for the identification of the presence of the signal peptide. (extracted features: Hydrophobicity, Amino Acid Composition, Net Charge, Hydrophilicity, Helix Propensity, Flexibility, Isoelectric Point (pI), Bulkiness).
+- An **SVM model** is trained, and feature selection using **RFE (Recursive Feature Elimination)** is applied for each of the five validation folds (3 training sets, 1 validation set, and 1 test set).
+More details in 
 
 ---
 ## Requirements 
