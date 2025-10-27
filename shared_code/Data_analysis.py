@@ -42,7 +42,7 @@ def frequences_calculator(dataset):
 
 
 def cut_sp_sequence_logo(row):
-  return str(row['sequence'])[(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
+  return row['sequence'][(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
 
 
 
