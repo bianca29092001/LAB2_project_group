@@ -42,47 +42,42 @@ def make_groups():
       train = (((i%5)+1 ,((i+1)%5)+1 ,((i+2)%5)+1))
       test = ((i+3)%5)+1
       cross_val = ((i+4)%5)+1
-      name_test = f'test_{i+1}'
-      group[name_test] = (train, test, cross_val)
+      name_run = f'Run_{i+1}'
+      group[name_run] = (train, test, cross_val)
   return group
 
-
-def vonHeijne_matrix(sequences, window:int):
+def vh_matrix_initialize(sequences_df, window:int, indexes):
   ''' Implements and initialize the von Heijne matrix'''
-  order = list("ARNDCQEGHILKMFPSTWYV")
-  PSWM = np.ones((15,20))
-  aa_index = {}
-  for i, aa in enumerate(order):
-    aa_index[aa]= i
-  PSPM_final = np.ones((window,20))
+  PSPM = np.ones((window,20))
 
-  for record in sequences['sp_cut']:
+  for record in sequences_df['sp_cut']:
     temp_matrix = np.zeros((window,20))
     for i, aa in enumerate(record):
-      if aa in aa_index:
-        col = aa_index[aa]
+      if aa in indexes:
+        col = indexes[aa]
         temp_matrix[i][col] += 1
 
-    PSPM_final += temp_matrix
-  return PSPM_final
+    PSPM += temp_matrix
+  return PSPM
 
 
 
-def calculus(PSPM_final, sequences, swiss_freq):
-  PSWM = PSPM_final/(len(sequences) +20)
+def vh_matrix_calculus(PSPM, sequences_df, swiss_freq, indexes):
+  x = PSPM/(len(sequences_df) +20)
   #Divide all the counts by the corresponding residue frequency in the SwissProtbackground distribution
-  for key , val in aa_index.items():
-    PSWM[:,val] /= swiss_freq[key]
+  for key , val in indexes.items():
+    x[:,val] /= swiss_freq[key]
   #log
-  log_odds = np.log(PSWM)
-  return log_odds, PSWM
+  PSWM = np.log(x)
+  return PSWM
 
 
 
-def full_pipeline(sequences, window:int, swiss_freq):
-  PSPM_final = vonHeijne_matrix(sequences, window)
-  log_odds, PSWM = calculus(PSPM_final, sequences, swiss_freq)
-  return log_odds, PSWM, PSPM_final
+def von_Heijne_matrix(sequences_df, window:int, swiss_freq, indexes):
+  PSPM = vh_matrix_initialize(sequences_df, window, indexes)
+  PSWM = vh_matrix_calculus(PSPM, sequences_df, swiss_freq, indexes)
+  return PSWM
+np.set_printoptions(edgeitems=10, linewidth=400)
 
 
 
@@ -100,16 +95,16 @@ def best_score_calculator(sequence, n_residues: int, window: int, PSWM, aa_index
 
 
 def cut_sp_sequence(row):
-    return str(row['sequence'])[(row['SP']-13):(row['SP']+2)]
+    return row['sequence'][(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
 
 
 
-def training_vonHeijne(training_set, train):
+def training_vonHeijne(training_set, train, indexes):
   tr_set = training_set[training_set['validation_n'].isin(train)]
   tr_set = tr_set.loc[tr_set["sp_type"]==1]
   tr_set['sp_cut'] = tr_set.apply(cut_sp_sequence, axis=1)
-  log_odds, PSWM, PSPM_final = full_pipeline(tr_set, 15, swiss_freq)
-  return log_odds
+  PSWM= von_Heijne_matrix(tr_set, 15, swiss_freq, indexes)
+  return PSWM
 
 
 
@@ -122,9 +117,9 @@ def score_vonHeijne(dataset, pswm, aa_index):
 
 
 
-def validation_vonHeijne(training_set, validation, log_odds, aa_index):
+def validation_vonHeijne(training_set, validation, PSWM, indexes):
   validation_set = training_set[training_set['validation_n'] == validation]
-  validation_scores = score_vonHeijne(validation_set, log_odds, aa_index)
+  validation_scores = score_vonHeijne(validation_set, PSWM, indexes)
   y_validation = validation_set["sp_type"].to_list()
   precision, recall, thresholds = precision_recall_curve(y_validation, validation_scores)
   fscore = (2 * precision * recall) / (precision + recall)
@@ -134,9 +129,9 @@ def validation_vonHeijne(training_set, validation, log_odds, aa_index):
 
 
 
-def test_vonHeijne(training_set, test, optimal_threshold, log_odds, aa_index):
+def test_vonHeijne(training_set, test, optimal_threshold, PSWM, indexes):
   test_set = training_set[training_set['validation_n'] == test]
-  test_scores = score_vonHeijne(test_set, log_odds, aa_index)
+  test_scores = score_vonHeijne(test_set, PSWM, indexes)
   y_pred_test = [int(t_s >= optimal_threshold) for t_s in test_scores]
   obs_test = test_set["sp_type"].to_list()
   return y_pred_test, obs_test
@@ -155,8 +150,11 @@ def metrics(obs_test, y_pred_test):
 
 def plot_pr_and_confusion(y_true, y_scores, y_test, y_pred_test, optimal_threshold=None, labels=None, run_id = None):
     fig, axes = plt.subplots(1, 2, figsize=(12,5))
+    suffix = f"{run_id}" if run_id is not None else ""
+    fig.suptitle(f'{suffix}')
+    
 
-    # --- 1. Precision–Recall Curve ---
+    # Precision–Recall Curve 
     precision, recall, thresholds = precision_recall_curve(y_true, y_scores)
     axes[0].plot(recall, precision, marker=".", label="PR curve")
     if optimal_threshold is not None:
@@ -169,7 +167,7 @@ def plot_pr_and_confusion(y_true, y_scores, y_test, y_pred_test, optimal_thresho
     axes[0].legend()
     axes[0].grid(True)
 
-    # --- 2. Confusion Matrix ---
+    # Confusion Matrix 
     cm = confusion_matrix(y_test, y_pred_test, labels=labels)
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
                 xticklabels=labels, yticklabels=labels, cbar=False, ax=axes[1])
@@ -178,7 +176,7 @@ def plot_pr_and_confusion(y_true, y_scores, y_test, y_pred_test, optimal_thresho
     axes[1].set_title("Confusion Matrix")
 
     plt.tight_layout()
-    suffix = f"_{run_id}" if run_id is not None else ""
     filename = f"pr_and_confusion{suffix}.png"
     plt.savefig(filename)
     plt.show()
+
