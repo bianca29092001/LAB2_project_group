@@ -23,7 +23,7 @@ The distribution of Signal Peptide **lengths** was compared between the positive
 The amino acid composition of the Signal Peptides from our dataset was compared to the general amino acid composition of all proteins in the SwissProt database.
 
 * **Dominant Amino Acid**: Signal Peptide amino acid composition in our dataset ( training + testing ) is characterized by a **significantly high frequency** of **Leucine (L)** ( ~ 22% ) and **Alanine**  ( ~ 14% ).
-* **Comparison with SwissProt**: The composition of our SP seqeunces show a **drastically higher content** of ** L,A,M,F,I and C** amino acids compare the the overall average of all proteins in SwissProt. This is to be expected as these residues are characteristic of the hydrophobic core of the SP. Likewise our SP sequences show a markedly lower concentration of highly hydrophilic residues. 
+* **Comparison with SwissProt**: The composition of our SP seqeunces show a **drastically higher content** of **L,A,M,F,I and C** amino acids compare the the overall average of all proteins in SwissProt. This is to be expected as these residues are characteristic of the hydrophobic core of the SP. Likewise our SP sequences show a markedly lower concentration of highly hydrophilic residues. 
 
 
 
