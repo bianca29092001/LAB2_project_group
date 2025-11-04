@@ -5,6 +5,7 @@ import re
 import sys
 import pandas as pd
 
+
 def echo(n: int):
     for i in range(n):
         print(i)
@@ -20,7 +21,6 @@ def get_next_link(headers):
     return None
 
 
-
 def get_batch(batch_url):
     while batch_url:
         response = session.get(batch_url)
@@ -30,14 +30,13 @@ def get_batch(batch_url):
         batch_url = get_next_link(response.headers)
 
 
-
 def get_kingdom(entry):
-  if "Fungi" in entry["organism"]["lineage"]:
-     kd = "Fungi"
-  elif "Viridiplantae" in entry["organism"]["lineage"]:
-    kd = "Viridiplantae"
-  elif "Metazoa" in entry["organism"]["lineage"]:
-    kd = "Metazoa"
-  else:
-    kd = "Other"
-  return kd
+    if "Fungi" in entry["organism"]["lineage"]:
+        kd = "Fungi"
+    elif "Viridiplantae" in entry["organism"]["lineage"]:
+        kd = "Viridiplantae"
+    elif "Metazoa" in entry["organism"]["lineage"]:
+        kd = "Metazoa"
+    else:
+        kd = "Other"
+    return kd
