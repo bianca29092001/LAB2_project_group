@@ -101,7 +101,8 @@ def metrics(obs_test, y_pred_test):
   PPV = skl.precision_score(obs_test, y_pred_test)              # Precision
   SEN = skl.recall_score(obs_test, y_pred_test)                 # Recall
   CONF =skl.confusion_matrix(obs_test , y_pred_test)            # Confusion Matrix
-  return MCC, ACC, PPV, SEN, CONF
+  F1_SCORE = skl.f1_score(obs_test, y_pred_test)                # F1 score
+  return MCC, ACC, PPV, SEN, CONF, F1_SCORE
 
 def plot_pr_and_confusion(y_true, y_scores, y_test, y_pred_test, optimal_threshold=None, labels=None, run_id = None):
     fig, axes = plt.subplots(1, 2, figsize=(12,5))
