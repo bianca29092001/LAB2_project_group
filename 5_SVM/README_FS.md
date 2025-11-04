@@ -22,6 +22,7 @@ All features are computed on the **N-terminal region** (first part of the sequen
 
 This part of the analysis combines **SVM classifiers** and **Random Forests** to select the most discriminative features.
 
+
 ### Workflow
 
 | Step | Description |
@@ -50,5 +51,21 @@ This part of the analysis combines **SVM classifiers** and **Random Forests** to
 | 5    | Selected features | 0.869 | 0.974 | 0.881 | 0.886 |
 |      | All features      | 0.886 | 0.978 | 0.912 | 0.886 |
 
+### Most significant features  
+Selected at least **3 times** out of **5 runs** of cross-validation:
+
+```python
+[
+  "score_1",
+  "hydrophilicity_1",
+  "hydrophobicity_11",
+  "hydrophobicity_12",
+  "hydrophobicity_10",
+  "hydrophobicity_13",
+  "flexibility_1",
+  "hydrophobicity_9",
+  "hydrophobicity_14",
+  "hydrophobicity_8"
+]
 
 
