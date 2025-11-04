@@ -25,12 +25,8 @@ def fasta_to_dataframe(fasta_file):
   pos_seqs = pd.DataFrame(data)
   return pos_seqs
 
-
-
 def cut_sp_sequence(row):
     return str(row['sequence'])[:int(row['cleavage_site'])]
-
-
 
 def frequences_calculator(dataset):
   dataset['sp_sequence'] = dataset.apply(cut_sp_sequence, axis=1)
@@ -40,11 +36,8 @@ def frequences_calculator(dataset):
   frequences = all_seq.value_counts(normalize=True) * 100
   return frequences
 
-
 def cut_sp_sequence_logo(row):
   return row['sequence'][(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
-
-
 
 def to_fasta(dataset, name):
     output_file = f"Logo_sequence_{name}.fasta"
