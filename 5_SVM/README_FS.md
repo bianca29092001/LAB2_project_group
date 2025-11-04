@@ -68,4 +68,48 @@ Selected at least **3 times** out of **5 runs** of cross-validation:
   "hydrophobicity_8"
 ]
 
+```
+### Evaluation on the Benchmarking Set
+This final step compares the performance of two SVM classifiers:
+one trained using the selected features (FS) and one trained using all available features.
+The goal is to assess whether feature selection improves the model’s generalization on unseen data.
 
+The dataset was split again into subsets 1–4 for training and 5 for testing, ensuring that the test set remained completely unseen during model selection.
+For both models, hyperparameters were optimized through a grid search on the training/validation sets and the final pipelines were evaluated on the benchmark set.
+
+| Model                  | MCC  | ACC  | PPV  | SEN  | F1 Score |
+|-------------------------|------|------|------|------|-----------|
+| SVM with Feature Selection (FS)    | 0.83 | 0.97 | 0.87 | 0.83 | 0.85 |
+| SVM without Feature Selection (all) | 0.9 | 0.98 | 0.92 | 0.89 | 0.91 |
+
+#### Confusion Matrices
+
+Both models show a strong predominance of true negatives and true positives, indicating good overall classification performance.
+
+
+| Actual / Predicted | Positive | Negative |
+|--------------------|-----------|-----------|
+| **Positive**       | **181 (TP)** | **38 (FN)** |
+| **Negative**       | **27 (FP)** | **1760 (TN)** |
+
+*Confusion Matrix – Benchmark SVM with FS*
+
+| Actual / Predicted | Positive | Negative |
+|--------------------|-----------|-----------|
+| **Positive**       | **197 (TP)** | **22 (FN)** |
+| **Negative**       | **17 (FP)** | **1770 (TN)** |
+
+*Confusion Matrix – Benchmark SVM without FS*
+
+
+#### ROC Curves and Precision–Recall Curves
+Both models achieved nearly identical ROC performance, with AUC = 0.980 (with FS) and AUC = 0.982 (without FS).
+
+The Precision–Recall analysis indicates slightly better precision for the model without feature selection,
+with AP = 0.917 (with FS) and AP = 0.953 (without FS).
+
+
+Feature selection leads to a slightly lower performance compared to the model trained with all features, although it still achieves strong generalization and competitive metrics.
+This suggests that, while dimensionality reduction simplifies the model and reduces redundancy, some discriminative information may be lost in the process.
+
+Overall, both pipelines perform robustly on the independent benchmarking set, confirming the reliability of the feature extraction and model training procedures.
