@@ -35,6 +35,8 @@ Each fold produces plots for:
 - Precision–Recall Curve
 - Confusion Matrix
 
+### Cross-Validation Results
+
 Finally, the average of all five thresholds is computed to obtain the mean threshold to be used for the independent test set. 
 
 | MCC      | ACC      | PPV      | SEN      | Threshold |
@@ -42,3 +44,25 @@ Finally, the average of all five thresholds is computed to obtain the mean thres
 | 0.658971  | 0.930186  | 0.676772 | 0.723061 | 6.1        |
 
 
+### Benchmark Evaluation
+
+For the final test, the PSWM was retrained on subsets 1–4, while subset 5, although used during cross-validation, was excluded from this training and used exclusively for evaluation.
+During this final evaluation, a new optimal threshold was estimated from the benchmarking data, resulting in a value of 5.9.
+This confirms consistent scoring behavior between the cross-validation and final evaluation phases, with only a small variation in the optimal decision point.
+
+| MCC     | ACC     | PPV     | SEN     | F1 Score | Threshold |
+|----------|----------|----------|----------|-----------|------------|
+| 0.65327 | 0.92732 | 0.61426 | 0.78538 | 0.68938  | 5.9 |
+
+The model achieved a strong balance between sensitivity and precision, confirming its ability to generalize to unseen data.
+
+Confusion Matrix
+
+| Actual / Predicted | Positive | Negative |
+|--------------------|-----------|-----------|
+| **Positive**       | **172 (TP)** | **47 (FN)** |
+| **Negative**       | **108 (FP)** | **1679 (TN)** |
+
+The confusion matrix confirms a strong balance between true and false classifications, highlighting good sensitivity and a high proportion of correctly identified negatives.
+
+Overall, the PSWM trained with the von Heijne-based approach demonstrated solid generalization on unseen sequences, achieving reliable performance across multiple metrics.
