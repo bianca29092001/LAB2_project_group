@@ -4,20 +4,21 @@ import matplotlib.pyplot as plt
 import sys
 import sklearn.metrics as skl
 import seaborn as sns
+import math
+import io
+import warnings
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-import warnings
-warnings.filterwarnings('ignore')
-from Bio.SeqUtils.ProtParam import ProteinAnalysis
-from Bio.SeqUtils import ProtParamData
+from Bio.SeqUtils.ProtParam import ProteinAnalysis, ProtParamData
 from aaindex import aaindex1
 from sklearn.metrics import matthews_corrcoef, accuracy_score, precision_score, recall_score, confusion_matrix, roc_curve, auc, precision_recall_curve, average_precision_score
-
-
+sys.path.append('../shared_code')
+import Data_analysis as da
+import Von_Heijne_model as vh
 
 def aa_composition(sequence, length: int, aa_index):
   ''' Calculate the aminoacid frequency of a sequence of a given length
@@ -30,76 +31,77 @@ def aa_composition(sequence, length: int, aa_index):
   freq = np.round(freq/len(sequence), 3)
   return freq
 
-
+def shannon_entropy(seq, window: int):
+    """Calculates the Shannon entropy on a given window of residues"""
+    seq = seq[:window]
+    L = len(seq)
+    if L == 0:
+        return 0
+    freqs = {aa: seq.count(aa) / L for aa in set(seq)}
+    H = -sum(p * math.log2(p) for p in freqs.values())
+    return H
 
 def hydrophobicity(sequence, window: int, length: int):
-  ''' Calculates the hydrophobicity of each residue considering the context given by sliding window of adiacent aminoacids
-  '''
-  sequence = sequence[:length]
-  seq = ProteinAnalysis(sequence)
-  kd_pos = seq.protein_scale(ProtParamData.kd,window)
-  d = int(window/2)
-  sequence_with_padding = "X"*d + sequence + "X"*d
-  seq_padding = ProteinAnalysis(sequence_with_padding)
-  kd_pos_with_padding = seq_padding.protein_scale(ProtParamData.kd, window)
-  warnings.filterwarnings('ignore')
-  return kd_pos_with_padding
+    """Calculates hydrophobicity ignoring Biopython warnings about non-standard amino acids."""
+    sequence = sequence[:length]
+    d = int(window / 2)
+    sequence_with_padding = "X" * d + sequence + "X" * d
+    # hyde warning messages
+    stderr_backup = sys.stderr
+    sys.stderr = io.StringIO()
+    try:
+        seq_padding = ProteinAnalysis(sequence_with_padding)
+        kd_pos_with_padding = seq_padding.protein_scale(ProtParamData.kd, window)
+    finally:
+        sys.stderr = stderr_backup  
+    return kd_pos_with_padding
 
 
+def feature_to_array(sequence, length: int, feature_code, window: int):
+    """Creates an array [mean, std, max] for a given AAindex feature,
+    suppressing Biopython's non-standard amino acid warnings without altering the sequence."""
+    
+    sequence = sequence[:length]
+    vals = aaindex1[feature_code].values
 
-def features(sequence, length: int, feature_code, window: int):
-  ''' Creates an array of 3 values corresponding to mean, standard deviation,
-      and maximum value of a given dictionary of features
-  '''
-  sequence = sequence[:length]
-  seq = ProteinAnalysis(sequence)
-  vals = aaindex1[feature_code].values
-  val = seq.protein_scale(vals,window)
-  mean = np.mean(val)
-  std = np.std(val)
-  max = np.max(val)
-  return np.round([mean, std, max], 3)
+    # Hides temporarily the warnong messages 
+    stderr_backup = sys.stderr
+    sys.stderr = io.StringIO()
+    try:
+        seq = ProteinAnalysis(sequence)
+        val = seq.protein_scale(vals, window)
+    finally:
+        sys.stderr = stderr_backup  # Restore the original stderr 
 
+    mean = np.mean(val)
+    std = np.std(val)
+    max_val = np.max(val)
 
+    return np.round([mean, std, max_val], 3)
 
 def npz_to_dataframe(npz_file):
-  extracted_features = np.load(npz_file)
-  data = {}
-  for key in extracted_features.files:
-      arr = extracted_features[key]
-      if arr.ndim > 1:
+    '''
+        Creates a dataframe from a .npz format file handling also multidimensional arrays
+    '''
+    matrices = np.load(npz_file)
+    data = {}
+    for key in matrices.files:
+        arr = matrices[key]
+        if arr.ndim > 1:
           # If the array is multi-dimensional, create multiple columns
-          for i in range(arr.shape[1]):
-              data[f'{key}_{i+1}'] = arr[:, i]
-      else:
+            for i in range(arr.shape[1]):
+                data[f'{key}_{i+1}'] = arr[:, i]
+        else:
           # If the array is 1-dimensional, use it directly
-          data[key] = arr
-  X = pd.DataFrame(data)
-  return X, data
-
-
-
-def make_groups():
-    l = [_ for _ in range(5)]
-    group = {}
-    for i in l:
-        print(f'{(i%5)+1} {((i+1)%5)+1} {((i+2)%5)+1} {((i+3)%5)+1} {((i+4)%5)+1}')
-        train = (((i%5)+1 ,((i+1)%5)+1 ,((i+2)%5)+1))
-        test = ((i+3)%5)+1
-        cross_val = ((i+4)%5)+1
-        name_test = f'test_{i+1}'
-        group[name_test] = (train, test, cross_val)
-    return group
-
-
-
+            data[key] = arr
+    X = pd.DataFrame(data)
+    return X, data
+    
 def svm_pipeline(C, gamma):
     return Pipeline([
         ("scaler", StandardScaler()),
         ("svm", SVC(kernel="rbf", C=C, gamma=gamma, random_state=42))
     ])
-
-
 
 def accuracy_on_subset(C, gamma, subset_features):
     # subset by feature names
@@ -112,22 +114,12 @@ def accuracy_on_subset(C, gamma, subset_features):
     pipe.fit(Xtr, y_train)     # train on TRAIN only
     return pipe.score(Xva, y_val)  # accuracy on VALIDATION
 
-
-
-def metrics(obs_test, y_pred_test):
-  MCC = skl.matthews_corrcoef(obs_test, y_pred_test)            # Matthews Correlation Coefficient
-  ACC = skl.accuracy_score(obs_test, y_pred_test)               # Accuracy
-  PPV = skl.precision_score(obs_test, y_pred_test)              # Precision
-  SEN = skl.recall_score(obs_test, y_pred_test)                 # Recall
-  CONF =skl.confusion_matrix(obs_test , y_pred_test)            # Confusion Matrix
-  return MCC, ACC, PPV, SEN, CONF
-
-
-
 def grid_search(C_grid, gamma_grid, X_train, Y_train, X_val, Y_val):
+    '''
+        Selects the best scores and the best params by training a SVM model on given train and validation sets
+    '''
     best_score = -np.inf
     best_params = None
-
     for C in C_grid:
         for gamma in gamma_grid:
             pipe = svm_pipeline(C, gamma)
