@@ -38,37 +38,37 @@ This part of the analysis combines **SVM classifiers** and **Random Forests** to
 
 ### Results summary for each validation fold 
 
-| Fold | Model | MCC   | ACC   | PPV   | SEN   |
-|------|-------|-------|-------|-------|-------|
-| 1    | Selected features | 0.849 | 0.970 | 0.847 | 0.886 |
-|      | All features      | 0.881 | 0.976 | 0.854 | 0.937 |
-| 2    | Selected features | 0.789 | 0.959 | 0.808 | 0.817 |
-|      | All features      | 0.852 | 0.971 | 0.873 | 0.863 |
-| 3    | Selected features | 0.829 | 0.968 | 0.903 | 0.794 |
-|      | All features      | 0.825 | 0.968 | 0.913 | 0.777 |
-| 4    | Selected features | 0.860 | 0.973 | 0.888 | 0.862 |
-|      | All features      | 0.858 | 0.973 | 0.902 | 0.845 |
-| 5    | Selected features | 0.869 | 0.974 | 0.881 | 0.886 |
-|      | All features      | 0.886 | 0.978 | 0.912 | 0.886 |
+| **Fold** | **Model**          | **MCC** | **ACC** | **PPV** | **SEN** | **F1 Score** |
+|:--------:|:-------------------|:-------:|:-------:|:-------:|:-------:|:-------------:|
+| 1 | Selected features | 0.88 | 0.98 | 0.85 | 0.94 | 0.89 |
+|   | All features       | 0.89 | 0.98 | 0.86 | 0.94 | 0.90 |
+| 2 | Selected features | 0.87 | 0.98 | 0.90 | 0.87 | 0.88 |
+|   | All features       | 0.87 | 0.98 | 0.90 | 0.87 | 0.88 |
+| 3 | Selected features | 0.80 | 0.96 | 0.88 | 0.76 | 0.82 |
+|   | All features       | 0.83 | 0.97 | 0.92 | 0.78 | 0.84 |
+| 4 | Selected features | 0.85 | 0.97 | 0.91 | 0.82 | 0.86 |
+|   | All features       | 0.88 | 0.98 | 0.90 | 0.82 | 0.89 |
+| 5 | Selected features | 0.88 | 0.98 | 0.89 | 0.89 | 0.89 |
+|   | All features       | 0.89 | 0.98 | 0.91 | 0.89 | 0.90 |
+
+
+#### **Average results (mean ± std)**
+
+| Metric | Selected Features | All Features |
+|:--------|:----------------:|:-------------:|
+| MCC | **0.85 ± 0.03** | 0.87 ± 0.02 |
+| ACC | 0.97 ± 0.01 | 0.97 ± 0.01 |
+| PPV | 0.89 ± 0.02 | **0.90 ± 0.02** |
+| SEN | 0.86 ± 0.06 | **0.87 ± 0.05** |
+| F1 Score | 0.87 ± 0.03 | **0.88 ± 0.02** |
+
+
+
 
 ### Most significant features  
-Selected at least **3 times** out of **5 runs** of cross-validation:
 
-```python
-[
-  "score_1",
-  "hydrophilicity_1",
-  "hydrophobicity_11",
-  "hydrophobicity_12",
-  "hydrophobicity_10",
-  "hydrophobicity_13",
-  "flexibility_1",
-  "hydrophobicity_9",
-  "hydrophobicity_14",
-  "hydrophobicity_8"
-]
+`score_1` `hydrophilicity_1` `hydrophobicity_11` `hydrophobicity_12` `hydrophobicity_10` `hydrophobicity_13` `flexibility_1` `hydrophobicity_9`
 
-```
 ### Evaluation on the Benchmarking Set
 This final step compares the performance of two SVM classifiers:
 one trained using the selected features (FS) and one trained using all available features.
