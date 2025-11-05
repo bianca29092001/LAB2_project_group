@@ -51,18 +51,11 @@ def frequences_calculator(dataset):
     return frequences
 
 def cut_sp_sequence_logo(row):
-<<<<<<< HEAD
-    return row["sequence"][
-        (int(row["cleavage_site"]) - 13) : (int(row["cleavage_site"]) + 2)
-    ]
+    return row['sequence'][(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
 
-=======
-  return row['sequence'][(int(row['cleavage_site'])-13):(int(row['cleavage_site'])+2)]
->>>>>>> f29cc5f907ed73f12175918e3b79ffad0a850fd0
-
-def to_fasta(dataset, name):
+def to_fasta(dataset, name ,path):
     output_file = f"Logo_sequence_{name}.fasta"
-    with open(output_file, "w") as logo_seq:
+    with open(path + output_file, "w") as logo_seq:
         for _, row in dataset.iterrows():
             logo_seq.write(f">{row['id']}\n{row['logo_sequence']}\n")
     return logo_seq

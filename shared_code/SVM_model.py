@@ -85,7 +85,7 @@ def npz_to_dataframe(npz_file):
     '''
     matrices = np.load(npz_file)
     data = {}
-    for key in matrices.files:
+    for key in matrices.files: 
         arr = matrices[key]
         if arr.ndim > 1:
           # If the array is multi-dimensional, create multiple columns
