@@ -24,11 +24,15 @@ The corresponding queries are available in [`query_pos.txt`](query_pos.txt) and 
 - Implementation of a **cross-validation pipeline** based on the von Heijne algorithm for SP identification.
 - Construction of a Position-Specific Weight Matrix (PSWM) from positive SP sequences. 
 - Application of the model to the **training set** to detect SPs and compute relevant performance metrics.
+- Final evaluation on an **independent benchmarking set**, achieving an average MCC of 0.65 and ACC of 0.93.
+- Analysis of **Precision–Recall** and **Confusion Matrix** confirming strong generalization on unseen sequences.
 
 ---
 ## Support Vector Machine Model
 - **Feature extraction**: identify the features that can possibly be informative for the identification of the presence of the signal peptide. (extracted features: Hydrophobicity, Amino Acid Composition, Net Charge, Hydrophilicity, Helix Propensity, Flexibility, Isoelectric Point (pI), Bulkiness).
 - An **SVM model** is trained, and feature selection using **RFE (Recursive Feature Elimination)** is applied for each of the five validation folds (3 training sets, 1 validation set, and 1 test set).
-
+- Final **benchmarking comparison** between SVM models trained *with* and *without* feature selection.  
+- Evaluation based on **MCC, ACC, PPV, SEN, F1-score**, along with **ROC** and **Precision–Recall curves**.  
+- Both models show **high accuracy (≈0.97–0.98)** and robust performance, with the non-FS model achieving slightly higher precision.
 ---
 ## Requirements 
