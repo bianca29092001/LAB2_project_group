@@ -56,7 +56,7 @@ This confirms consistent scoring behavior between the cross-validation and final
 
 The model achieved a strong balance between sensitivity and precision, confirming its ability to generalize to unseen data.
 
-Confusion Matrix
+#### Confusion Matrix and Precision–Recall curve
 
 | Actual / Predicted | Positive | Negative |
 |--------------------|-----------|-----------|
@@ -64,5 +64,8 @@ Confusion Matrix
 | **Negative**       | **108 (FP)** | **1679 (TN)** |
 
 The confusion matrix confirms a strong balance between true and false classifications, highlighting good sensitivity and a high proportion of correctly identified negatives.
+
+In addition, the **Precision–Recall curve** illustrates consistent model behavior, with high precision maintained over a broad recall range, supporting the overall balance observed in the confusion matrix.
+
 
 Overall, the PSWM trained with the von Heijne-based approach demonstrated solid generalization on unseen sequences, achieving reliable performance across multiple metrics.
