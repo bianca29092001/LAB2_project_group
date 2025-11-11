@@ -35,4 +35,11 @@ The corresponding queries are available in [`query_pos.txt`](query_pos.txt) and 
 - Evaluation based on **MCC, ACC, PPV, SEN, F1-score**, along with **ROC** and **Precision–Recall curves**.  
 - Both models show **high accuracy (≈0.97–0.98)** and robust performance, with the non-FS model achieving slightly higher precision.
 ---
+
+## Error Analysis  
+Post-validation analysis of both models focused on False Positives (FP) and False Negatives (FN) to identify the main sources of misclassification.    
+By comparing feature distributions (Von Heijne scores, peptide length, hydrophobicity, hydrophilicity, and flexibility), the analysis revealed that short or weakly hydrophobic sequences are more frequently misclassified.  
+The SVM model recovered several of these cases, showing better recall, while the von Heijne model remained more conservative but highly precise.
+
+---
 ## Requirements 
