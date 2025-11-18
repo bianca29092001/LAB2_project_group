@@ -17,6 +17,8 @@ All features are computed on the **N-terminal region** (first part of the sequen
 | **Flexibility** | Local backbone flexibility; distinguishes rigid vs flexible regions. | Mean, variation, and maximum; BHAR880101 scale, window 7. Tridimensional numpy array |
 | **Isoelectric Point (pI)** | Local charge balance along the sequence. | Mean, variation, and maximum; ZIMJ680104 scale, window 2. Tridimensional numpy array|
 | **Bulkiness** | Steric volume of side chains; indicates packing and solvent accessibility. | Mean, variation, and maximum; ZIMJ680102 scale, window 7. Tridimensional numpy array|
+| **Von Heijne Score** | Quantifies the structural resemblance of the sequence to the canonical SP model (N-H-C regions). | PSWM trained on positive sequences (containing SPs). Score is the max local alignment value between the sequence and the PSWM, considering all possible cleavage positions. Single dimensional value per sequence.|
+| **Shannon Entropy** | Measures the complexity and variability of the amino acid distribution in the N-terminal region. | Calculated over the first 30 residues of the sequence. Single dimensional value per sequence.|
 
 ## 2. Feature Selection Procedure
 
