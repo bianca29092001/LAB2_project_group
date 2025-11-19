@@ -16,6 +16,8 @@
 5. Selecting the unique ids corresponding to the representative sequences obtained through clustering with the command:
 
     ```bash
+    
+   cut -f 1 cluster-results_cluster.tsv | uniq > uniq.pos.tsv
    cut -f 1 cluster-results-neg_cluster.tsv | uniq > uniq.neg.tsv
     ```
 
