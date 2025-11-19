@@ -4,8 +4,8 @@ In this step we explored data comparing training and test set
 ## 1. Comparison between sequence length in positive and negative entries
 The distribution of sequence lengths ( log10-transformed for easier visualization ) were compared between positive and negative entries from both Training and Test sets. 
 
-* **Training Set**: Sequence with a **Signal Peptide** ( positives - 1 ) tend to be **shorter** than the sequences without Signal Peptide ( negative - 0 ). The distribution of positive sequences is visibly shifted to the left ( shorter ) compared to the negatives.
-* **Test Set**: We can see a similar trend to the distributions from the training set, having a lower average length in the sequences containing a Signal Peptide
+* **Training Set**: Sequence with a **Signal Peptide** ( positives - 1 ) tend to be **longer** than the sequences without Signal Peptide ( negative - 0 ). The distribution of positive sequences is visibly shifted to the right ( longer ) compared to the negatives.
+* **Test Set**: We can see a similar trend to the distributions from the training set, having a higher average length in the sequences containing a Signal Peptide
 
 <img src="figures/Sequence_length_histograms.png" width="400">
 
