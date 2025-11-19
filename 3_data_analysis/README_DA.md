@@ -33,7 +33,7 @@ The amino acid composition of the Signal Peptides from our dataset was compared 
 ## 4. Taxonomic classification at kingdom and species level
 The distribution of protein entries across different kingdoms was analyzed.
 
-* **Kingdoms**: In both the training and test sets, **Metaazoa** is the overwhelmingly dominant kingdom, **representing ~55%** of the overall sample. The remainder of the entries are split between **Fungi**( ~25% ), **Viridiplantae** ( ~17% ), and _other_ ( ~2% )
+* **Kingdoms**: In both the training and test sets, **Metazoa** is the overwhelmingly dominant kingdom, **representing ~55%** of the overall sample. The remainder of the entries are split between **Fungi**( ~25% ), **Viridiplantae** ( ~17% ), and _other_ ( ~2% )
 * **Comparison Between Sets**: Overall the composition of the sets is nearly identical between training and test sets, reinforcing the idea that they are representative of eachother.
 
 
