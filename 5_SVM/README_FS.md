@@ -14,6 +14,7 @@ All features are computed on the **N-terminal region** (first part of the sequen
 | **Net Charge** | Overall electrostatic charge; highlights positive/negative regions. | Mean, standard deviation, and maximum values per sequence; KLEP840101 scale, window 2. Tridimensional numpy array |
 | **Hydrophilicity** | Indicates how exposed sequence regions are to water. | Mean, variation, and maximum values; HOPT810101 scale, sliding window 5. Tridimensional numpy array |
 | **Helix Propensity** | Tendency to form α-helices; reflects secondary structure preference. | Mean, standard deviation, and maximum; CHAM830101 scale, window 7. Tridimensional numpy array|
+| **Beta-sheet Propensity** | Propension of an aminoacid to form a β-sheet in the secondary structure of a protein. | Mean, standard deviation, and maximum; CHOP780202 scale, window 7. Tridimensional numpy array|
 | **Flexibility** | Local backbone flexibility; distinguishes rigid vs flexible regions. | Mean, variation, and maximum; BHAR880101 scale, window 7. Tridimensional numpy array |
 | **Isoelectric Point (pI)** | Local charge balance along the sequence. | Mean, variation, and maximum; ZIMJ680104 scale, window 2. Tridimensional numpy array|
 | **Bulkiness** | Steric volume of side chains; indicates packing and solvent accessibility. | Mean, variation, and maximum; ZIMJ680102 scale, window 7. Tridimensional numpy array|
