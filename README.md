@@ -43,3 +43,43 @@ The SVM model recovered several of these cases, showing better recall, while the
 
 ---
 ## Requirements 
+This project relies on several Python libraries needed for data collection, processing, analysis, and machine learning model development.  
+To ensure a reproducible environment, all required dependencies are listed in a dedicated [`requirements.txt`](Report/requirements.txt) file.
+
+### Required Libraries
+
+The notebooks make use of the following categories of packages:
+
+- **Core scientific computing**  
+  - `numpy`  
+  - `pandas`
+
+- **Data visualization**  
+  - `matplotlib`  
+  - `seaborn`
+
+- **Machine learning and statistical evaluation**  
+  - `scikit-learn`  
+  - `statsmodels`
+
+- **Bioinformatics**  
+  - `biopython`  
+  - `aaiindex`
+
+- **Data collection & utilities**  
+  - `requests`  
+  - `tqdm`
+
+These libraries support tasks such as:
+- retrieving protein sequences from UniProt  
+- parsing and preprocessing FASTA/TSV datasets  
+- computing amino acid properties and feature extraction  
+- training and validating ML models  
+- generating plots, metrics, and error analyses  
+
+###  Installing Dependencies
+
+Once the [`requirements.txt`](Report/requirements.txt) file is added to the repository, all required libraries can be installed using:
+
+```bash
+pip install -r requirements.txt
