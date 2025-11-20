@@ -83,3 +83,10 @@ Once the [`requirements.txt`](Report/requirements.txt) file is added to the repo
 
 ```bash
 pip install -r requirements.txt
+```
+
+### External Tools
+
+This project also requires **MMseqs2** (required for sequence clustering and redundancy removal), which is not installable via pip and must be installed separately:
+
+Install instructions: https://github.com/soedinglab/MMseqs2
